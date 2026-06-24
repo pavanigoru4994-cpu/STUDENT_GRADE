@@ -1,83 +1,137 @@
 ```python
-# Student Grade Management System - Level 3
+import csv
 
-def get_student_data():
-    name = input("Enter Student Name: ")
-    subjects = int(input("Enter Number of Subjects: "))
-
-    marks_list = []
-    total_marks = 0
-
-    for i in range(1, subjects + 1):
-        subject_name = input(f"Enter Subject {i} Name: ")
-
-        while True:
-            marks = int(input(f"Enter Marks for {subject_name}: "))
-
-            if 0 <= marks <= 100:
-                break
-
-            print("Invalid Marks! Please enter marks between 0 and 100.")
-
-        marks_list.append((subject_name, marks))
-        total_marks += marks
-
-    average = total_marks / subjects
-
-    return name, marks_list, total_marks, average
+FILE_NAME = "student_records.csv"
 
 
-def calculate_grade(average):
-    if average >= 90:
+def calculate_grade(avg):
+    if avg >= 90:
         return "A"
-    elif average >= 75:
+    elif avg >= 75:
         return "B"
-    elif average >= 50:
+    elif avg >= 50:
         return "C"
-    elif average >= 35:
+    elif avg >= 35:
         return "D"
     else:
         return "F"
 
 
-def check_result(marks_list):
-    for subject, marks in marks_list:
+def add_student():
+    name = input("Enter Student Name: ")
+    roll_no = input("Enter Roll Number: ")
+
+    subjects = int(input("Enter Number of Subjects: "))
+
+    total = 0
+    fail = False
+
+    for i in range(1, subjects + 1):
+        subject = input(f"Enter Subject {i} Name: ")
+
+        while True:
+            marks = int(input(f"Enter Marks in {subject}: "))
+            if 0 <= marks <= 100:
+                break
+            print("Marks must be between 0 and 100.")
+
         if marks < 35:
-            return "FAIL"
-    return "PASS"
+            fail = True
+
+        total += marks
+
+    average = total / subjects
+    grade = calculate_grade(average)
+    result = "FAIL" if fail else "PASS"
+
+    with open(FILE_NAME, "a", newline="") as file:
+        writer = csv.writer(file)
+
+        writer.writerow([
+            name,
+            roll_no,
+            total,
+            round(average, 2),
+            grade,
+            result
+        ])
+
+    print("\nStudent Record Saved Successfully!")
 
 
-def display_report(name, marks_list, total_marks, average, grade, result):
-    print("\n====================================")
-    print("      STUDENT GRADE REPORT")
-    print("====================================")
+def view_records():
+    try:
+        with open(FILE_NAME, "r") as file:
+            reader = csv.reader(file)
 
-    print(f"Student Name : {name}")
+            print("\n========== STUDENT RECORDS ==========")
 
-    print("\nSubject-wise Marks:")
-    for subject, marks in marks_list:
-        print(f"{subject:<15} : {marks}")
+            for row in reader:
+                print(
+                    f"Name: {row[0]} | "
+                    f"Roll No: {row[1]} | "
+                    f"Total: {row[2]} | "
+                    f"Average: {row[3]} | "
+                    f"Grade: {row[4]} | "
+                    f"Result: {row[5]}"
+                )
 
-    print("\n------------------------------------")
-    print(f"Total Marks   : {total_marks}")
-    print(f"Average Marks : {average:.2f}")
-    print(f"Grade         : {grade}")
-    print(f"Result        : {result}")
-    print("====================================")
+    except FileNotFoundError:
+        print("No records found.")
 
 
-# Main Program
-name, marks_list, total_marks, average = get_student_data()
+def search_student():
+    roll_no = input("Enter Roll Number to Search: ")
 
-grade = calculate_grade(average)
-result = check_result(marks_list)
+    try:
+        with open(FILE_NAME, "r") as file:
+            reader = csv.reader(file)
 
-display_report(
-    name,
-    marks_list,
-    total_marks,
-    average,
-    grade,
-    result
-)
+            found = False
+
+            for row in reader:
+                if row[1] == roll_no:
+                    print("\n===== STUDENT FOUND =====")
+                    print(f"Name    : {row[0]}")
+                    print(f"Roll No : {row[1]}")
+                    print(f"Total   : {row[2]}")
+                    print(f"Average : {row[3]}")
+                    print(f"Grade   : {row[4]}")
+                    print(f"Result  : {row[5]}")
+                    found = True
+                    break
+
+            if not found:
+                print("Student not found.")
+
+    except FileNotFoundError:
+        print("No records available.")
+
+
+while True:
+    print("\n================================")
+    print(" STUDENT GRADE MANAGEMENT SYSTEM")
+    print("================================")
+    print("1. Add Student")
+    print("2. View Records")
+    print("3. Search Student")
+    print("4. Exit")
+
+    choice = input("Enter Choice: ")
+
+    if choice == "1":
+        add_student()
+
+    elif choice == "2":
+        view_records()
+
+    elif choice == "3":
+        search_student()
+
+    elif choice == "4":
+        print("Thank You for Using the System!")
+        break
+
+    else:
+        print("Invalid Choice.")
 ```
