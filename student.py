@@ -1,16 +1,48 @@
-N = int(input("enter the subjects -"))
-total = 0
-for _ in range(N):
-    total += int(input())
-average = total / N
-if average >= 85:
-    grade = "Excellent"
-elif average >= 60:
-    grade = "Good"
-elif average >= 40:
-    grade = "Average"
+```python
+# Student Grade Management System
+
+print("===================================")
+print("   STUDENT GRADE MANAGEMENT SYSTEM")
+print("===================================")
+
+# Student Details
+student_name = input("Enter Student Name: ")
+
+# Number of subjects
+subjects = int(input("Enter Number of Subjects: "))
+
+total_marks = 0
+fail = False
+
+# Enter marks
+for i in range(1, subjects + 1):
+    marks = int(input(f"Enter Marks for Subject {i}: "))
+
+    if marks < 35:
+        fail = True
+
+    total_marks += marks
+
+# Calculate average
+average = total_marks / subjects
+
+# Determine Grade
+if fail:
+    grade = "FAIL"
+elif average >= 90:
+    grade = "A"
+elif average >= 75:
+    grade = "B"
+elif average >= 50:
+    grade = "C"
 else:
-    grade = "Fail"
-print(f"Average: {average}")
-print(f"Grade: {grade}")
- 
+    grade = "FAIL"
+
+# Display Result
+print("\n===== STUDENT REPORT =====")
+print("Student Name :", student_name)
+print("Total Marks  :", total_marks)
+print("Average      :", round(average, 2))
+print("Grade        :", grade)
+print("==========================")
+```
